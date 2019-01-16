@@ -1,2 +1,3 @@
 # scratch-link-node
-ScratchLink implementation for raspberry pi box
+
+scratch-link-node 是ScratchLink的Node.js实现版本，目前仅在树莓派上做过验证。
