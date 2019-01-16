@@ -1,0 +1,9 @@
+- name: Upload assets to rpi
+  synchronize:
+    src: ../code/
+    dest: ~/CodePlayerBox/scratch-link-node/
+    rsync_opts:
+      - "--delete"
+      - "--exclude=.DS_Store"
+      - "--exclude=.env"
+      - "--exclude=node_modules"

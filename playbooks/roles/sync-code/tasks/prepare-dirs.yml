@@ -1,0 +1,7 @@
+- name: Create directories if needed
+  file:
+   path:  ~/CodePlayerBox/scratch-link-node
+   #owner: user
+   #group: user
+   #mode: 0755
+   state: directory

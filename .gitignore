@@ -1,9 +1,10 @@
 # Mac OS
 .DS_Store
 
-# NPM
-/node_modules
+# NPM and YARN
+node_modules
 npm-*
+package-lock.json
 *.lock
 
 # Testing
@@ -11,10 +12,17 @@ npm-*
 /coverage
 
 # Build
-/build
-/dist
+build
+dist
 /.opt-in
+
+# Temporary files
+*.log
+*.swp
 
 # generated translation files
 /translations
 /locale
+
+# Ansible
+*.retry
