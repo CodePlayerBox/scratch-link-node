@@ -10,10 +10,10 @@ const debugData = Debug('ws-data');
 export default class WebSocketServer {
 
   constructor(port) {
-    this.wsServer = new WebSocket.Server({
+    this._wss = new WebSocket.Server({
       port: port
     });
-    this.wsServer.on('connection', ws => {
+    this._wss.on('connection', ws => {
       debug("[new client]");
       let session = new LinkSession(ws);
     });

@@ -13,10 +13,9 @@ const utils = Jayson.Utils;
 export default class LinkSession {
 
   constructor(ws) {
-    this.ws = ws;
-    this.ble = BLEAdapter;
-    this.peripheralId = null;
-    this.sid = Math.random();
+    this._ws = ws;
+    this._ble = BLEAdapter;
+    this._peripheralId = null;
 
     this.jaysonServer = Jayson.server({
       'discover': this._discoverMethod.bind(this),
@@ -26,11 +25,11 @@ export default class LinkSession {
 
     });
 
-    this.ws.on('message', this._onWSMessage.bind(this));
-    this.ws.on('close', this._onWSClose.bind(this));
+    this._ws.on('message', this._onWSMessage.bind(this));
+    this._ws.on('close', this._onWSClose.bind(this));
 
-    this.ble.on('discover', this._onBLEDiscover.bind(this));
-    this.ble.on('notification', this._onBLENotification.bind(this));
+    this._ble.on('discover', this._onBLEDiscover.bind(this));
+    this._ble.on('notification', this._onBLENotification.bind(this));
   }
 
   _discoverMethod(args, callback) {
@@ -44,7 +43,7 @@ export default class LinkSession {
         });
       }
     });
-    this.ble.startScanning(serviceUuids);
+    this._ble.startScanning(serviceUuids);
     callback(null, null);
   }
 
@@ -53,7 +52,7 @@ export default class LinkSession {
     if (args.startNotifications) {
       let serviceUuid = args.serviceId.toString(16);
       let characteristicUuid = args.characteristicId.replace(/-/g, '');
-      this.ble.subscribe(characteristicUuid);
+      this._ble.subscribe(characteristicUuid);
     }
     callback(null, null);
   }
@@ -63,7 +62,7 @@ export default class LinkSession {
     let serviceUuid = args.serviceId.toString(16);
     let characteristicUuid = args.characteristicId.replace(/-/g, '');
     let data = Buffer.from(args.message, args.encoding);
-    this.ble.write(characteristicUuid, data, err => {
+    this._ble.write(characteristicUuid, data, err => {
       if (args.withResponse) {
         // TODO: we need return response
       }
@@ -73,8 +72,8 @@ export default class LinkSession {
 
   _connectMethod(args, callback) {
     debug('=> connect');
-    this.peripheralId = args.peripheralId;
-    this.ble.connect(args.peripheralId);
+    this._peripheralId = args.peripheralId;
+    this._ble.connect(args.peripheralId);
     callback(null, null);
   }
 
@@ -94,9 +93,9 @@ export default class LinkSession {
   }
 
   _onWSClose() {
-    debug("=> close\n\t" + this.sid);
-    this.ws = null;
-    this.ble.disconnect(this.peripheralId);
+    debug("=> close");
+    this._ws = null;
+    this._ble.disconnect(this._peripheralId);
   }
 
   // initialize the websocket client
@@ -119,7 +118,7 @@ export default class LinkSession {
             if (err) {
               return this._respondError(err);
             }
-            this.ws.send(body);
+            this._ws.send(body);
           }).bind(this));
         } else {
           // no response received at all, must be a notification
@@ -143,9 +142,9 @@ export default class LinkSession {
     debugData("<= notify\n\t" + JSON.stringify(request));
 
     // trigger event
-    if(this.ws) {
+    if(this._ws) {
       try {
-        this.ws.send(JSON.stringify(request));
+        this._ws.send(JSON.stringify(request));
       } catch (e) {
         // we ignore it
         debug("== error\n\t" + e);

@@ -12,10 +12,10 @@ class BLEAdapter extends EventEmitter {
     super();
 
     // use peripheral to store the corresponding one
-    this.peripherals = {};
-    this.characteristics = {};
-    this.pendingSubscribeUuids = [];
-    this.deviceReady = false;
+    this._peripherals = null;
+    this._characteristics = null;
+    this._pendingSubscribeUuids = null;
+    this._deviceReady = false;
 
     noble.on('stateChange', this._stateChange.bind(this));
     noble.on('scanStart', this._scanStart.bind(this));
@@ -26,7 +26,7 @@ class BLEAdapter extends EventEmitter {
   _stateChange(state) {
     debug('[stateChange]\n\t' + state);
     if (state === 'poweredOn') {
-      this.deviceReady = true;
+      this._deviceReady = true;
     }
   }
 
@@ -40,7 +40,7 @@ class BLEAdapter extends EventEmitter {
 
   _discover(peripheral) {
     debug('[discover]\n\t' + peripheral);
-    this.peripherals[peripheral.id] = peripheral;
+    this._peripherals[peripheral.id] = peripheral;
     this.emit('discover', peripheral);
 
     // we stop scanning when device are discovered
@@ -48,9 +48,6 @@ class BLEAdapter extends EventEmitter {
   }
 
   _discoverCharacteristics(peripheral) {
-    // reset all characteristics
-    this.characteristics = {};
-
     //var serviceUuids = ["f005"];
     //var characterUuids = [
     //  "5261da01fa7e42ab850b7c80220097cc",
@@ -64,8 +61,8 @@ class BLEAdapter extends EventEmitter {
         services.map(service => {
           service.discoverCharacteristics([], (error, characteristics) => {
             characteristics.map(c => {
-              this.characteristics[c.uuid] = c;
-              if (this.pendingSubscribeUuids.indexOf(c.uuid) >= 0) {
+              this._characteristics[c.uuid] = c;
+              if (this._pendingSubscribeUuids.indexOf(c.uuid) >= 0) {
                 // someone is pending to subscribe it
                 this.subscribe(c.uuid);
               }
@@ -85,8 +82,12 @@ class BLEAdapter extends EventEmitter {
   }
 
   startScanning(serviceUuids) {
-    debug('[request scanning]\n\t' + this.deviceReady);
-    if (this.deviceReady) {
+    debug('[request scanning]\n\t' + this._deviceReady);
+    if (this._deviceReady) {
+      // reset all status
+      this._peripherals = {};
+      this._characteristics = {};
+      this._pendingSubscribeUuids = [];
       noble.startScanning(serviceUuids);
     }
   }
@@ -98,13 +99,10 @@ class BLEAdapter extends EventEmitter {
   // connect the ble peripheral
   connect(id) {
     debug('[connect]\n\t' + id);
-    let peripheral = this.peripherals[id];
+    let peripheral = this._peripherals[id];
     if (!peripheral) {
       return;
     }
-
-    // reset the subscribes table
-    this.pendingSubscribeUuids = [];
 
     peripheral.once('connect', (err) => {
       this._discoverCharacteristics(peripheral);
@@ -115,13 +113,13 @@ class BLEAdapter extends EventEmitter {
     });
 
     peripheral.connect(err => {
-      debug('[connected]' + err);
+      debug('[connected]\n\t' + err);
     });
   }
 
   disconnect(id) {
     debug('[disconnect]\n\t' + id);
-    let peripheral = this.peripherals[id];
+    let peripheral = this._peripherals[id];
     if (!peripheral) {
       return;
     }
@@ -132,7 +130,7 @@ class BLEAdapter extends EventEmitter {
   }
 
   subscribe(characteristicUuid) {
-    let characteristic = this.characteristics[characteristicUuid];
+    let characteristic = this._characteristics[characteristicUuid];
     if (characteristic) {
       if (characteristic.properties.indexOf('notify') >= 0) {
         debug('[subscribe]\n\t' + characteristic);
@@ -142,18 +140,18 @@ class BLEAdapter extends EventEmitter {
           //callback(error, "", "", null);
         });
       }
-      let index = this.pendingSubscribeUuids.indexOf(characteristicUuid);
+      let index = this._pendingSubscribeUuids.indexOf(characteristicUuid);
       if (index >= 0) {
-        this.pendingSubscribeUuids.splice(index, 1);
+        this._pendingSubscribeUuids.splice(index, 1);
       }
     } else {
       // push the characteristic uuid as pending one
-      this.pendingSubscribeUuids.push(characteristicUuid);
+      this._pendingSubscribeUuids.push(characteristicUuid);
     }
   }
 
   write(characteristicUuid, data, callback) {
-    let characteristic = this.characteristics[characteristicUuid];
+    let characteristic = this._characteristics[characteristicUuid];
     if (characteristic) {
       characteristic.write(data, true, callback);
     }
