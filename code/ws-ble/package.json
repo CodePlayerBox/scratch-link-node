@@ -1,5 +1,5 @@
 {
-  "name": "scratch-link-node",
+  "name": "scratch-link-node__ws-ble",
   "version": "0.0.1",
   "description": "ScratchLink implementation by nodejs.",
   "main": "index.js",
