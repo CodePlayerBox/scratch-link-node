@@ -1,0 +1,6 @@
+version: '3'
+
+services:
+  scratch-link-node:
+    image: "scratch-link-node"
+    build: .

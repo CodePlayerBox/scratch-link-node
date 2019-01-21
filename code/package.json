@@ -1,0 +1,49 @@
+{
+  "name": "scratch-link-node",
+  "version": "0.0.1",
+  "description": "ScratchLink implementation by nodejs.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup -c rollup.config.js",
+    "start": "nodemon src/index.js --exec babel-node",
+    "ws-ble": "DEBUG=app,ble,ws,link node dist/ws-ble.js",
+    "ws-ble:debug": "DEBUG=app,ble,ws,link nodemon ws-ble/index.js --exec babel-node",
+    "device-manager": "DEBUG=app node dist/device-manager",
+    "device-manager:debug": "DEBUG=app nodemon device-manager/index.js --exec babel-node"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodePlayerBox/scratch-link-node.git"
+  },
+  "keywords": [
+    "scratch"
+  ],
+  "author": "Wenpeng Xiao <xiaowp@flamingoeda.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/CodePlayerBox/scratch-link-node/issues"
+  },
+  "homepage": "https://github.com/CodePlayerBox/scratch-link-node#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "nodemon": "^1.18.9",
+    "rollup": "^1.1.1",
+    "rollup-plugin-auto-external": "^2.0.0",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-json": "^3.1.0",
+    "rollup-plugin-node-builtins": "^2.1.2",
+    "rollup-plugin-node-globals": "^1.4.0",
+    "rollup-plugin-node-resolve": "^4.0.0"
+  },
+  "dependencies": {
+    "debug": "^4.1.1",
+    "express": "^4.16.4",
+    "http-proxy-middleware": "^0.19.1",
+    "jayson": "^2.1.1",
+    "noble": "^1.9.1",
+    "selfsigned-ca": "git+https://github.com/CodePlayerBox/selfsigned-ca.git",
+    "ws": "^6.1.2"
+  }
+}

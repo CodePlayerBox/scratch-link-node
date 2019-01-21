@@ -1,0 +1,107 @@
+#!/bin/bash
+
+#title           :scratch_link
+#description     :This script will configure a raspberry pi board
+#                 for running scratch link.
+#author          :Wenpeng Xiao <xiaowp@flamingoeda.com>
+#date            :20190121
+#version         :0.1
+#usage           :bash scratch_link <start|stop> [interface]
+#bash_version    :4.4.12(1)-release (arm-unknown-linux-gnueabihf)
+#dependencies	   :docker
+#=============================================================
+
+#YELLOW='\e[0;33m'
+#BLACK='\e[0;30m'
+#CYAN='\e[0;36m'
+#WHITE='\e[0;37m'
+MAGENTA='\e[0;35m'
+RED='\e[0;31m'
+GREEN='\e[0;32m'
+BLUE='\e[0;34m'
+NC='\e[0m'
+
+DOCKER_NAME="scratch-link-node"
+DOCKER_IMAGE="scratch-link-node"
+ARCH=$(arch)
+
+if [ "$ARCH" != "armv7l" ]
+then
+    echo "We only support raspberry pi running on armv7. Exiting..."
+    exit 1
+fi
+
+show_usage () {
+    echo -e "Usage: $0 <start|stop>"
+    exit 1
+}
+
+if [ "$1" == "help" ] || [ "$#" -eq 0 ]
+then
+    show_usage
+fi
+
+# Argument check
+if [ "$#" -eq 0 ] || [ "$#" -gt 1 ]
+then
+    show_usage
+fi
+
+print_banner () {
+    echo -e "${MAGENTA}"'  ____          _      ____  _                       ____            ' "${NC}"
+    echo -e "${MAGENTA}"' / ___|___   __| | ___|  _ \| | __ _ _   _  ___ _ __| __ )  _____  __' "${NC}"
+    echo -e "${MAGENTA}"'| |   / _ \ / _` |/ _ \ |_) | |/ _` | | | |/ _ \ '"'"'__|  _ \ / _ \ \/ /' "${NC}"
+    echo -e "${MAGENTA}"'| |__| (_) | (_| |  __/  __/| | (_| | |_| |  __/ |  | |_) | (_) >  < ' "${NC}"
+    echo -e "${MAGENTA}"' \____\___/ \__,_|\___|_|   |_|\__,_|\__, |\___|_|  |____/ \___/_/\_\' "${NC}"
+    echo -e "${MAGENTA}"'                                     |___/                           ' "${NC}"
+    echo ""
+}
+
+
+init () {
+    # Architecture
+    echo -e "${BLUE}[INFO]${NC} Architecture: ${GREEN}$ARCH${NC}"
+
+    # Checking if the docker image has been already pulled
+    IMG_CHECK=$(docker images -q $DOCKER_IMAGE)
+    if [ "$IMG_CHECK" != "" ]
+    then
+        echo -e "${BLUE}[INFO]${NC} Docker image ${GREEN}$DOCKER_IMAGE${NC} found."
+    else
+        echo -e "${BLUE}[INFO]${NC} Docker image ${RED}$DOCKER_IMAGE${NC} not found. Exiting..."
+        exit 1
+    fi
+}
+
+service_start () {
+    echo -e "[+] Starting the docker container with name ${GREEN}$DOCKER_NAME${NC}"
+    docker run -dt --name $DOCKER_NAME \
+        -v /var/run/dbus:/var/run/dbus \
+        --network=host \
+        $DOCKER_IMAGE > /dev/null 2>&1
+    pid=$(docker inspect -f '{{.State.Pid}}' $DOCKER_NAME)
+
+    ### start all in the container
+    echo -e "[+] Starting ${GREEN}start_all${NC} command in the docker container ${GREEN}$DOCKER_NAME${NC}"
+    docker exec "$DOCKER_NAME" start_all
+}
+
+service_stop () {
+    echo -e "[-] Stopping ${GREEN}$DOCKER_NAME${NC}"
+    docker stop $DOCKER_NAME > /dev/null 2>&1
+    echo -e "[-] Removing ${GREEN}$DOCKER_NAME${NC}"
+    docker rm $DOCKER_NAME > /dev/null 2>&1
+}
+
+if [ "$1" == "start" ]
+then
+    service_stop
+    clear
+    print_banner
+    service_start
+elif [ "$1" == "stop" ]
+then
+    service_stop
+else
+    echo "Usage: $0 <start|stop>"
+fi

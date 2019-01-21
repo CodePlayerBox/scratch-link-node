@@ -7,4 +7,4 @@ import Debug from 'debug';
 const debug = Debug('app');
 const debugData = Debug('app-data');
 
-const server = new WebSocketServer(20110);
+const server = new WebSocketServer(20190);

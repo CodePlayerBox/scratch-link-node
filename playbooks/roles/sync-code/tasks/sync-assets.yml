@@ -1,9 +1,19 @@
-- name: Upload assets to rpi
+- name: Upload docker to rpi
   synchronize:
-    src: ../code/
+    src: ../docker/
     dest: ~/CodePlayerBox/scratch-link-node/
     rsync_opts:
       - "--delete"
       - "--exclude=.DS_Store"
-      - "--exclude=.env"
+      - "--exclude=code"
       - "--exclude=node_modules"
+
+- name: Upload code to rpi
+  synchronize:
+    src: ../code/
+    dest: ~/CodePlayerBox/scratch-link-node/code
+    rsync_opts:
+      - "--delete"
+      - "--exclude=.DS_Store"
+      - "--exclude=node_modules"
+      - "--exclude=dist"
