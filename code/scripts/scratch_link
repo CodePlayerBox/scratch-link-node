@@ -21,8 +21,8 @@ GREEN='\e[0;32m'
 BLUE='\e[0;34m'
 NC='\e[0m'
 
-DOCKER_NAME="scratch-link-node"
-DOCKER_IMAGE="scratch-link-node"
+DOCKER_NAME="scratch-link-rpi"
+DOCKER_IMAGE="scratch-link-rpi"
 ARCH=$(arch)
 
 if [ "$ARCH" != "armv7l" ]
@@ -79,11 +79,6 @@ service_start () {
         -v /var/run/dbus:/var/run/dbus \
         --network=host \
         $DOCKER_IMAGE > /dev/null 2>&1
-    pid=$(docker inspect -f '{{.State.Pid}}' $DOCKER_NAME)
-
-    ### start all in the container
-    echo -e "[+] Starting ${GREEN}start_all${NC} command in the docker container ${GREEN}$DOCKER_NAME${NC}"
-    docker exec "$DOCKER_NAME" start_all
 }
 
 service_stop () {

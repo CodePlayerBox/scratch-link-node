@@ -1,10 +1,10 @@
 #!/bin/sh
 
-### START command 1
-#cmd1
+### Start websocket ble server
+DEBUG=app,ble,ws,link node ws-ble.js &
 
-### START command 2
-#cmd2
+### Start device manager
+DEBUG=app node device-manager.js
 
 ### Never stop it
 while :

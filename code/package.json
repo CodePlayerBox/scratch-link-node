@@ -5,11 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rollup -c rollup.config.js",
+    "rollup": "rollup -c rollup.config.js",
+    "build": "npm run rollup && cp -f package.json dist &&  npm install --production --prefix dist",
     "start": "nodemon src/index.js --exec babel-node",
-    "ws-ble": "DEBUG=app,ble,ws,link node dist/ws-ble.js",
+    "ws-ble": "DEBUG=app,ble,ws,link node ws-ble.js",
     "ws-ble:debug": "DEBUG=app,ble,ws,link nodemon ws-ble/index.js --exec babel-node",
-    "device-manager": "DEBUG=app node dist/device-manager",
+    "device-manager": "DEBUG=app node device-manager.js",
     "device-manager:debug": "DEBUG=app nodemon device-manager/index.js --exec babel-node"
   },
   "repository": {
