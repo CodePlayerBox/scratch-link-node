@@ -6,6 +6,7 @@
       - "--delete"
       - "--exclude=.DS_Store"
       - "--exclude=code"
+      - "--exclude=script"
       - "--exclude=node_modules"
 
 - name: Upload code to rpi
@@ -17,3 +18,11 @@
       - "--exclude=.DS_Store"
       - "--exclude=node_modules"
       - "--exclude=dist"
+
+- name: Upload script to rpi
+  synchronize:
+    src: ../script/
+    dest: ~/CodePlayerBox/scratch-link-node/script
+    rsync_opts:
+      - "--delete"
+      - "--exclude=.DS_Store"
