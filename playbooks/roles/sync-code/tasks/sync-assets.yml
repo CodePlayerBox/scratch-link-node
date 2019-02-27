@@ -17,7 +17,6 @@
       - "--delete"
       - "--exclude=.DS_Store"
       - "--exclude=node_modules"
-      - "--exclude=dist"
 
 - name: Upload script to rpi
   synchronize:

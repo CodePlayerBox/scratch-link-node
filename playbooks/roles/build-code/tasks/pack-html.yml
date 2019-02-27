@@ -1,0 +1,17 @@
+- name: Install node modules
+  local_action:
+    module: shell yarn install
+    chdir: ../code
+  register: command_result
+  changed_when: False
+
+#- debug: msg="{{ command_result.stdout }}"
+
+- name: Rollup the code
+  local_action:
+    module: shell yarn run rollup
+    chdir: ../code
+  register: command_result
+  changed_when: False
+
+#- debug: msg="{{ command_result.stdout }}"
