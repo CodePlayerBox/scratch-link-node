@@ -25,3 +25,8 @@
     rsync_opts:
       - "--delete"
       - "--exclude=.DS_Store"
+
+- name: Install all packages
+  yarn:
+    path: ~/CodePlayerBox/scratch-link-node/code
+    production: True

@@ -19,6 +19,12 @@ scratch-link-node 是ScratchLink的Node.js实现版本，目前仅在树莓派�
 * micro:bit 测试通过
 * LEGO EV3 手头没有硬件
 
+## 检出代码
+在开发主机上执行下面的git复制代码
+```
+git clone --recursive https://github.com/CodePlayerBox/scratch-link-node.git
+```
+
 ## 构建运行
 
 1. 在开发主机上，通过Ansible将代码同步到树莓派上

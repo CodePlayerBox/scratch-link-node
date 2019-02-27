@@ -12,8 +12,10 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 # Install app
+COPY code/codeplayerbox-cert/certs/codeplayerbox-server.crt codeplayerbox-cert/certs/codeplayerbox-server.crt
+COPY code/codeplayerbox-cert/certs/codeplayerbox-server.key codeplayerbox-cert/certs/codeplayerbox-server.key
+COPY code/node_modules node_modules
 COPY code/dist .
-COPY code/cert cert
 
 # Initialize script when container start.
 COPY ./docker-entrypoint.sh /
