@@ -1,0 +1,3 @@
+[submodule "code/codeplayerbox-cert"]
+	path = code/codeplayerbox-cert
+	url = https://github.com/CodePlayerBox/codeplayerbox-cert.git

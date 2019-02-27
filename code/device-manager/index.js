@@ -22,7 +22,7 @@ function createHttpsServer(devCert) {
 }
 
 async function loadCerts() {
-  var devCert = new Cert('cert/codeplayerbox-server');
+  var devCert = new Cert('codeplayerbox-cert/certs/codeplayerbox-server');
 
   try {
     debug('loading existing dev certificate');
