@@ -1,4 +1,5 @@
 FROM balenalib/raspberry-pi-alpine-node:8
+
 MAINTAINER Wenpeng Xiao <xiaowp@flamingoeda.com>
 
 # Install packages.
@@ -14,8 +15,8 @@ WORKDIR /usr/src/app
 # Install app
 COPY code/codeplayerbox-cert/certs/codeplayerbox-server.crt codeplayerbox-cert/certs/codeplayerbox-server.crt
 COPY code/codeplayerbox-cert/certs/codeplayerbox-server.key codeplayerbox-cert/certs/codeplayerbox-server.key
-COPY code/node_modules node_modules
 COPY code/dist .
+COPY code/node_modules node_modules
 
 # Initialize script when container start.
 COPY ./docker-entrypoint.sh /
